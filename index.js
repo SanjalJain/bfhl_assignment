@@ -54,7 +54,7 @@ app.post('/bfhl', (req, res) => {
     res.status(500).send("Internal server error");
   }
 });
-// lets gooo
-app.listen(3000, () => {
-  console.log('Server started on port 3000'); 
-});
+// // lets gooo
+// app.listen(3000, () => {
+//   console.log('Server started on port 3000'); 
+// });
