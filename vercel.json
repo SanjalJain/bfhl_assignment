@@ -1,9 +1,7 @@
+
 {
   "version": 2,
   "builds": [
-    { "src": "index.js", "use": "@vercel/node" }
-  ],
-  "routes": [
-    { "src": "/bfhl", "methods": ["POST"], "dest": "/index.js" }
+    { "src": "api/bfhl.js", "use": "@vercel/node" }
   ]
 }
