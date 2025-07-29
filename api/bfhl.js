@@ -37,18 +37,21 @@
 //     res.status(405).json({ message: 'Method Not Allowed' });
 //   }
 // }
-
 export default function handler(req, res) {
-  if (req.method === 'POST') {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Only POST requests allowed' });
+  }
+
+  try {
     const input = req.body.data || [];
 
-    let even = [], odd = [], alpha = [], specialChars = [];
-    let sum = 0;
+    let even = [], odd = [], alpha = [], specialChars = [], sum = 0;
 
     input.forEach(item => {
       if (!isNaN(item)) {
         const num = Number(item);
-        (num % 2 === 0 ? even : odd).push(item);
+        if (num % 2 === 0) even.push(item);
+        else odd.push(item);
         sum += num;
       } else if (/^[a-zA-Z]+$/.test(item)) {
         alpha.push(item.toUpperCase());
@@ -57,9 +60,9 @@ export default function handler(req, res) {
       }
     });
 
-    const concatStr = alpha.join('').split('').reverse()
-      .map((char, i) => i % 2 === 0 ? char.toUpperCase() : char.toLowerCase())
-      .join('');
+    const concatStr = alpha.join('').split('').reverse().map((ch, i) =>
+      i % 2 === 0 ? ch.toUpperCase() : ch.toLowerCase()
+    ).join('');
 
     res.status(200).json({
       is_success: true,
@@ -73,7 +76,9 @@ export default function handler(req, res) {
       sum: sum.toString(),
       concat_string: concatStr
     });
-  } else {
-    res.status(405).json({ error: 'Only POST method is allowed' });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
   }
 }
