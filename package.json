@@ -8,9 +8,17 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
-    "express": "^5.1.0",
-    "@vercel/node": "^2.15.3"
-  }
+    "@vercel/node": "^2.15.10",
+    "express": "^5.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SanjalJain/bfhl_assignment.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SanjalJain/bfhl_assignment/issues"
+  },
+  "homepage": "https://github.com/SanjalJain/bfhl_assignment#readme",
+  "description": ""
 }

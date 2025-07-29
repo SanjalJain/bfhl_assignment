@@ -1,19 +1,11 @@
-
-
 {
   "version": 2,
   "builds": [{ "src": "api/bfhl.js", "use": "@vercel/node" }],
   "routes": [
     { 
-      "src": "/api/bfhl", 
-      "methods": ["POST"], 
+      "src": "/bfhl", 
+      "methods": ["POST"],  // Only POST allowed
       "dest": "/api/bfhl.js" 
-    },
-    { 
-      "src": "/api/bfhl", 
-      "methods": ["GET"], 
-      "dest": "/api/bfhl.js",
-      "headers": { "Allow": "POST" }  
     }
   ]
 }

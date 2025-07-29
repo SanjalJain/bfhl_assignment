@@ -40,105 +40,69 @@
 
 
 // api/bfhl.js
-import express from 'express';
-import bodyParser from 'body-parser';
+export default async (req, res) => {
+  // Strictly handle only POST requests
+  if (req.method !== 'POST') {
+    return res.status(405).json({
+      is_success: false,
+      error: "Method not allowed. Only POST requests are accepted."
+    });
+  }
 
-const app = express();
-
-// Middleware
-app.use(bodyParser.json());
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'POST');
-  next();
-});
-
-// Handler function
-const handler = async (req, res) => {
   try {
-    if (req.method === 'GET') {
-      return res.status(200).json({
-        operation_code: 1,
-        message: "Send a POST request with JSON body: { data: [...] }",
-        example_request: {
-          data: ["a", "1", "334", "4", "R", "$"]
-        },
-        example_response: {
-          is_success: true,
-          user_id: "sanjal_jain_17092004",
-          email: "sanjal2248.be22@chitkara.edu.in",
-          roll_number: "2210992248",
-          odd_numbers: ["1"],
-          even_numbers: ["334", "4"],
-          alphabets: ["A", "R"],
-          special_characters: ["$"],
-          sum: "339",
-          concat_string: "Ra"
-        }
-      });
-    }
-
-    if (req.method !== 'POST') {
-      return res.status(405).json({ 
-        is_success: false,
-        error: "Only POST method is allowed" 
-      });
-    }
-
     const input = req.body.data || [];
-    const even = [], odd = [], alpha = [], specialChars = [];
-    let sum = 0;
+    
+    // Initialize response with your personal details
+    const response = {
+      is_success: true,
+      user_id: "sanjal_jain_17092004", // {full_name_ddmmyyyy}
+      email: "sanjal2248.be22@chitkara.edu.in",
+      roll_number: "2210992248",
+      odd_numbers: [],
+      even_numbers: [],
+      alphabets: [],
+      special_characters: [], // Note: Typo kept consistent with requirements
+      sum: "0", // Initialize as string
+      concat_string: ""
+    };
 
+    // Process each element
     input.forEach(item => {
-      if (!isNaN(item)) {
-        const num = Number(item);
-        if (num % 2 === 0) even.push(item.toString());
-        else odd.push(item.toString());
-        sum += num;
-      } else if (/^[a-zA-Z]+$/.test(item)) {
-        alpha.push(item.toUpperCase());
-      } else {
-        specialChars.push(item);
+      const num = Number(item);
+      
+      if (!isNaN(num)) { // Number case
+        if (num % 2 === 0) {
+          response.even_numbers.push(item.toString());
+        } else {
+          response.odd_numbers.push(item.toString());
+        }
+        response.sum = (Number(response.sum) + num).toString();
+      } 
+      else if (/^[a-zA-Z]+$/.test(item)) { // Alphabet case
+        const upper = item.toUpperCase();
+        response.alphabets.push(upper);
+        // Build concatenated string in reverse order
+        response.concat_string = upper.split('').reverse().join('') + response.concat_string;
+      } 
+      else { // Special character case
+        response.special_characters.push(item);
       }
     });
 
-    const concatStr = alpha.join('')
+    // Apply alternating case to concatenated string
+    response.concat_string = response.concat_string
       .split('')
-      .reverse()
-      .map((char, idx) => 
-        idx % 2 === 0 ? char.toUpperCase() : char.toLowerCase()
+      .map((char, index) => 
+        index % 2 === 0 ? char.toUpperCase() : char.toLowerCase()
       )
       .join('');
 
-    return res.status(200).json({
-      is_success: true,
-      user_id: "sanjal_jain_17092004",
-      email: "sanjal2248.be22@chitkara.edu.in",
-      roll_number: "2210992248",
-      odd_numbers: odd,
-      even_numbers: even,
-      alphabets: alpha,
-      special_characters: specialChars,
-      sum: sum.toString(),
-      concat_string: concatStr
-    });
+    return res.status(200).json(response);
 
   } catch (error) {
-    console.error("Error:", error);
     return res.status(500).json({
       is_success: false,
       error: "Internal server error"
     });
   }
 };
-
-// Export for Vercel
-export default handler;
-
-// Local development
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 3000;
-  app.post('/api/bfhl', handler);
-  app.get('/api/bfhl', handler);
-  app.listen(PORT, () => console.log(`Local server running on port ${PORT}`));
-}
